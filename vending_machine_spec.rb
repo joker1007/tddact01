@@ -4,11 +4,6 @@ require "rspec-parameterized"
 
 describe VendingMachine do 
 
-  it 'returns total accespted money' do
-    subject.total_accepted_money = 100
-    subject.total_accepted_money.should == 100
-  end
-
   describe "#accept_money(money)" do
     with_them do
       it "should add money to total_accepted_money" do
@@ -40,6 +35,24 @@ describe VendingMachine do
         ]
       end
 
+    end
+  end
+
+  describe "#payback" do
+    with_them do
+      it "should return total_accepted_money" do
+        subject.accept_money(money)
+        subject.payback.should == expected
+        subject.total_accepted_money.should == 0
+      end
+    end
+
+    where(:money, :expected) do
+      [
+        [0, 0],
+        [10, 10],
+        [100, 100]
+      ]
     end
   end
 end

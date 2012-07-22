@@ -1,7 +1,7 @@
 require "bundler/setup"
 
 class VendingMachine
-  attr_accessor :total_accepted_money
+  attr_reader :total_accepted_money
 
   def initialize
     @total_accepted_money = 0
@@ -9,5 +9,11 @@ class VendingMachine
 
   def accept_money(money)
     @total_accepted_money += money
+  end
+
+  def payback
+    before_total_accepted_money = total_accepted_money
+    @total_accepted_money = 0
+    before_total_accepted_money
   end
 end
