@@ -7,11 +7,11 @@ class VendingMachine
     10, 50, 100, 500, 1000
   ]
 
-  def initialize
+  def initialize(juice_stocks = [Juice.new(:coke, 120)]*5)
     @total_accepted_money = 0
     @purchased = 0
     @sales = 0
-    @juice_stocks = [Juice.new(:coke, 120)]*5
+    @juice_stocks = juice_stocks
   end
 
   def accept_money(money)
@@ -33,14 +33,27 @@ class VendingMachine
 
   def purchasable?(juice_name)
     target = @juice_stocks.find{|juice| juice.name == :coke}
-    current_money >= target.price
+    target && current_money >= target.price
   end
 
   def sell(juice_name)
     return unless purchasable?(juice_name)
     target = @juice_stocks.find{|juice| juice.name == :coke}
+    reduce_juice_stock(juice_name)
     @sales += target.price
   end
+
+  def get_juice_stock_count(juice_name)
+    @juice_stocks.select{|juice| juice.name == :coke}.size
+  end
+
+  private 
+
+  def reduce_juice_stock(juice_name)
+    target_index = @juice_stocks.index{|juice| juice.name == :coke}
+    target_index && @juice_stocks.delete_at(target_index)
+  end
+
 end
 
 class Juice

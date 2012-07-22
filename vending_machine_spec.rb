@@ -86,6 +86,14 @@ describe VendingMachine do
   end
 
   describe "#purchasable?(juice_name)" do
+    context "no coke" do
+      subject { VendingMachine.new([]) } 
+      
+      it do
+        subject.purchasable?(:coke).should be_false
+      end
+    end
+
     context "accept_money not yet" do
       it do
         subject.purchasable?(:coke).should be_false
@@ -122,21 +130,28 @@ describe VendingMachine do
   end
 
   describe "#sell(juice_name)" do
-    context "コウニュウデキヤす" do
+    context "purchasable coke" do
       before do
         subject.accept_money(100)
         subject.accept_money(10)
         subject.accept_money(10)
       end
 
-      it do
+      it "increments sales" do
         expect {
           subject.sell(:coke)
         }.to change(subject, :sales).by(120)
       end
 
+      it "decrements juice stock count" do
+        expect {
+          subject.sell(:coke)
+        }.to change {
+          subject.get_juice_stock_count(:coke)
+        }.by(-1)
+      end
     end
-    context "購入できない" do
+    context "not purchasable coke" do
       
       before do
         subject.accept_money(100)
