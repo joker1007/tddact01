@@ -1,29 +1,36 @@
 require "bundler/setup"
 
 class VendingMachine
-  attr_reader :total_accepted_money, :juice_stocks, :sales
+  attr_reader :juice_stocks, :sales
 
   ACCEPTABLE_MONEY_LIST = [
     10, 50, 100, 500, 1000
   ]
 
   def initialize(juice_stocks = [Juice.new(:coke, 120)]*5)
-    @total_accepted_money = 0
+    @accepted_moneys = []
     @purchased = 0
     @sales = 0
     @juice_stocks = juice_stocks
   end
 
-  def accept_money(money)
-    # 受け付ける対象じゃない場合、そのままmoneyを返す
-    return money unless ACCEPTABLE_MONEY_LIST.include?(money)
+  def total_accepted_money
+    @accepted_moneys.inject(0) do |sum, money|
+      sum += money.value
+    end
+  end
 
-    @total_accepted_money += money
+  # インターフェースの利便性を考慮して、引数に数字リテラルを想定する
+  def accept_money(money_value)
+    # 受け付ける対象じゃない場合、そのままmoneyを返す
+    return money_value unless ACCEPTABLE_MONEY_LIST.include?(money_value)
+
+    @accepted_moneys << Money.new(money_value)
   end
 
   def payback
     payback_money = current_money
-    @total_accepted_money = 0
+    @accepted_moneys.clear
     @purchased = 0
     payback_money
   end
@@ -47,7 +54,7 @@ class VendingMachine
 
   private 
   def current_money
-    @total_accepted_money - @purchased
+    total_accepted_money - @purchased
   end
 
   def reduce_juice_stock(juice_name)
@@ -66,5 +73,13 @@ class Juice
 
   def == (other)
     @name == other.name && @price == other.price
+  end
+end
+
+class Money
+  attr_reader :value
+
+  def initialize(value)
+    @value = value
   end
 end
