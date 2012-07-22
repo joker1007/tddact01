@@ -1,7 +1,7 @@
 require "bundler/setup"
 
 class VendingMachine
-  attr_reader :total_accepted_money, :juice_stocks
+  attr_reader :total_accepted_money, :juice_stocks, :sales
 
   ACCEPTABLE_MONEY_LIST = [
     10, 50, 100, 500, 1000
@@ -9,6 +9,8 @@ class VendingMachine
 
   def initialize
     @total_accepted_money = 0
+    @purchased = 0
+    @sales = 0
     @juice_stocks = [Juice.new(:coke, 120)]*5
   end
 
@@ -19,12 +21,25 @@ class VendingMachine
     @total_accepted_money += money
   end
 
+  def current_money
+    @total_accepted_money - @purchased
+  end
+
   def payback
     before_total_accepted_money = total_accepted_money
     @total_accepted_money = 0
     before_total_accepted_money
   end
 
+  def purchasable?(juice_name)
+    target = @juice_stocks.find{|juice| juice.name == :coke}
+    current_money >= target.price
+  end
+
+  def sell(juice_name)
+    target = @juice_stocks.find{|juice| juice.name == :coke}
+    @sales += target.price
+  end
 end
 
 class Juice

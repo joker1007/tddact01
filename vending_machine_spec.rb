@@ -78,15 +78,61 @@ describe VendingMachine do
   end
 
   describe "#juice_stocks" do
- 
     it "should return a juice array" do
       subject.juice_stocks.should == [Juice.new(:coke, 120)]*5
-
     end
-
   end
 
+  describe "#purchasable?(juice_name)" do
+    context "accept_money not yet" do
+      it do
+        subject.purchasable?(:coke).should be_false
+      end
+    end
 
+    context "after accept_money(120)" do
+      before do
+        subject.accept_money(100)
+        subject.accept_money(10)
+        subject.accept_money(10)
+      end
 
+      it { subject.purchasable?(:coke).should be_true }
+    end
+
+    context "after accept_money(110)" do
+      before do
+        subject.accept_money(100)
+        subject.accept_money(10)
+      end
+
+      it { subject.purchasable?(:coke).should be_false }
+    end
+
+    context "after accept_money(130)" do
+      before do
+        subject.accept_money(100)
+        3.times { subject.accept_money(10) }
+      end
+
+      it { subject.purchasable?(:coke).should be_true }
+    end
+  end
+
+  describe "#sell(juice_name)" do
+    context "purchasable coke" do
+      before do
+        subject.accept_money(100)
+        subject.accept_money(10)
+        subject.accept_money(10)
+      end
+
+      it do
+        expect {
+          subject.sell(:coke)
+        }.to change(subject, :sales).by(120)
+      end
+    end
+  end
 end
 
