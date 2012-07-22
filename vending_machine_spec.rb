@@ -62,11 +62,17 @@ describe VendingMachine do
   end
 
   describe "#payback" do
+    it "should clear total_accepted_money" do
+      subject.accept_money(100)
+      expect {
+        subject.payback
+      }.to change(subject, :total_accepted_money).from(100).to(0)
+    end
+
     with_them do
       it "should return total_accepted_money" do
         subject.accept_money(money)
         subject.payback.should == expected
-        subject.total_accepted_money.should == 0
       end
     end
 
@@ -76,6 +82,27 @@ describe VendingMachine do
         [10, 10],
         [100, 100]
       ]
+    end
+
+    context "after sell" do
+      with_them do
+        it "should return total_accepted_money" do
+          money_list.each do |money|
+            subject.accept_money(money)
+          end
+          subject.sell(:coke)
+
+          subject.payback.should == payback_money
+        end
+      end
+
+      where(:money_list, :payback_money) do
+        [
+          [[0], 0],
+          [[100, 10, 10], 0],
+          [[100, 10, 10, 10], 10],
+        ]
+      end
     end
   end
 
@@ -162,10 +189,7 @@ describe VendingMachine do
           subject.sell(:coke)
         }.to change(subject, :sales).by(0)
       end
-
     end
-
-
   end
 end
 

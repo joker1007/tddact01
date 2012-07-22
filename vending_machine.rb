@@ -21,14 +21,11 @@ class VendingMachine
     @total_accepted_money += money
   end
 
-  def current_money
-    @total_accepted_money - @purchased
-  end
-
   def payback
-    before_total_accepted_money = total_accepted_money
+    payback_money = current_money
     @total_accepted_money = 0
-    before_total_accepted_money
+    @purchased = 0
+    payback_money
   end
 
   def purchasable?(juice_name)
@@ -40,6 +37,7 @@ class VendingMachine
     return unless purchasable?(juice_name)
     target = @juice_stocks.find{|juice| juice.name == :coke}
     reduce_juice_stock(juice_name)
+    @purchased += target.price
     @sales += target.price
   end
 
@@ -48,6 +46,9 @@ class VendingMachine
   end
 
   private 
+  def current_money
+    @total_accepted_money - @purchased
+  end
 
   def reduce_juice_stock(juice_name)
     target_index = @juice_stocks.index{|juice| juice.name == :coke}
