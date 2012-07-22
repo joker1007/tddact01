@@ -76,5 +76,17 @@ describe VendingMachine do
       ]
     end
   end
+
+  describe "#juice_stocks" do
+ 
+    it "should return a juice array" do
+      subject.juice_stocks.should == [Juice.new(:coke, 120)]*5
+
+    end
+
+  end
+
+
+
 end
 
