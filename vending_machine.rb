@@ -37,6 +37,7 @@ class VendingMachine
   end
 
   def sell(juice_name)
+    return unless purchasable?(juice_name)
     target = @juice_stocks.find{|juice| juice.name == :coke}
     @sales += target.price
   end

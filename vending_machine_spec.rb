@@ -1,3 +1,5 @@
+#coding:utf-8
+
 require File.dirname(__FILE__) + '/vending_machine'
 
 require "rspec-parameterized"
@@ -120,7 +122,7 @@ describe VendingMachine do
   end
 
   describe "#sell(juice_name)" do
-    context "purchasable coke" do
+    context "コウニュウデキヤす" do
       before do
         subject.accept_money(100)
         subject.accept_money(10)
@@ -132,7 +134,23 @@ describe VendingMachine do
           subject.sell(:coke)
         }.to change(subject, :sales).by(120)
       end
+
     end
+    context "購入できない" do
+      
+      before do
+        subject.accept_money(100)
+      end
+
+      it do
+        expect {
+          subject.sell(:coke)
+        }.to change(subject, :sales).by(0)
+      end
+
+    end
+
+
   end
 end
 
