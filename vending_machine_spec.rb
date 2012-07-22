@@ -168,5 +168,37 @@ describe VendingMachine do
       end
     end
   end
+
+  describe "#add_juice_stock" do
+    subject { VendingMachine.new([])}
+    
+    it "accept juice" do
+      juice = Juice.new(:redbull, 200)
+      subject.add_juice_stock(juice)
+      subject.juice_stocks.should == [juice]
+    end
+  end
+
+  describe "#get_purchasable_juice_names" do
+    with_them do
+      subject { VendingMachine.new([Juice.new(:coke,120), Juice.new(:redbull,200)]) }
+      it "return purchasable juice names" do
+        money_list.each do |money|
+          subject.accept_money(money)
+        end
+        subject.get_purchasable_juice_names.should == purchasable_juice_names
+      end
+    end
+    where(:money_list, :purchasable_juice_names) do
+      [
+        [[100,10], []],
+        [[100,10,10], [:coke]],
+        [[100,50,10,10,10,10], [:coke]],
+        [[100,100], [:coke,:redbull]],
+        [[100,100,10], [:coke,:redbull]]
+      ]
+    end
+
+  end
 end
 

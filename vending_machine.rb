@@ -40,6 +40,11 @@ class VendingMachine
     target && current_money >= target.price
   end
 
+  def get_purchasable_juice_names
+    @juice_stocks.select{|juice| juice.price <= current_money}.map{|juice| juice.name}.uniq
+  end
+
+
   def sell(juice_name)
     return unless purchasable?(juice_name)
     target = @juice_stocks.find{|juice| juice.name == :coke}
@@ -51,6 +56,11 @@ class VendingMachine
   def get_juice_stock_count(juice_name)
     @juice_stocks.select{|juice| juice.name == :coke}.size
   end
+
+  def add_juice_stock(juice)
+    @juice_stocks << juice
+  end
+
 
   private 
   def current_money
