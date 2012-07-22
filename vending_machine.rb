@@ -1,3 +1,4 @@
+# coding: utf-8
 require "bundler/setup"
 
 class VendingMachine
@@ -32,6 +33,7 @@ class VendingMachine
     payback_money = current_money
     @accepted_moneys.clear
     @purchased = 0
+
     payback_money
   end
 
@@ -51,6 +53,14 @@ class VendingMachine
     reduce_juice_stock(juice_name)
     @purchased += target.price
     @sales += target.price
+
+    if block_given?
+      yield payback
+    else
+      puts "#{payback}円"
+    end
+
+    target
   end
 
   def get_juice_stock_count(juice_name)

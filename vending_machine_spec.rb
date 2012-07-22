@@ -69,29 +69,6 @@ describe VendingMachine do
         ]
       end
     end
-
-    context "after sell" do
-      with_them do
-        before do
-          money_list.each do |money|
-            subject.accept_money(money)
-          end
-          subject.sell(:coke)
-        end
-
-        it "should return total_accepted_money" do
-          subject.payback.should == payback_money
-        end
-      end
-
-      where(:money_list, :payback_money) do
-        [
-          [[0], 0],
-          [[100, 10, 10], 0],
-          [[100, 10, 10, 10], 10],
-        ]
-      end
-    end
   end
 
   describe "#juice_stocks" do
@@ -155,7 +132,18 @@ describe VendingMachine do
           subject.get_juice_stock_count(:coke)
         }.by(-1)
       end
+
+      it do
+        subject.should_receive(:payback).and_return(0)
+        subject.sell(:coke)
+      end
+
+      it do
+        subject.stub!(:payback).and_return(0)
+        expect {|b| subject.sell(:coke, &b)}.to yield_with_args(0)
+      end
     end
+
     context "not purchasable coke" do
       before do
         subject.accept_money(100)
