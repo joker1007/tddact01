@@ -12,11 +12,10 @@ class VendingMachine
   end
 
   def accept_money(money)
-    # 受け付ける対象じゃない場合、nil
-    return nil unless ACCEPTABLE_MONEY_LIST.include?(money)
+    # 受け付ける対象じゃない場合、そのままmoneyを返す
+    return money unless ACCEPTABLE_MONEY_LIST.include?(money)
 
     @total_accepted_money += money
-    money
   end
 
   def payback
