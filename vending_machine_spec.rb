@@ -18,7 +18,11 @@ describe VendingMachine do
     where(:money, :expected) do
       [
         [10, 10],
-        [100, 100]
+        [100, 100],
+        [1, 0],
+        [5, 0],
+        [5000, 0],
+        [10000, 0],
       ]
     end
 
@@ -38,26 +42,6 @@ describe VendingMachine do
           [100, 10, 110]
         ]
       end
-
-      context "unacceptable money" do
-        with_them do
-          it "should not accept money" do
-            expect {
-              subject.accept_money(money1)
-              subject.accept_money(money2)
-            }.to change(subject, :total_accepted_money).by(0)
-          end
-        end
-
-        where(:money1, :money2) do
-          [
-            [1, 1],
-            [1, 5],
-            [5000, 10000],
-            [10000, 1],
-          ]
-        end
-      end
     end
   end
 
@@ -69,29 +53,33 @@ describe VendingMachine do
       }.to change(subject, :total_accepted_money).from(100).to(0)
     end
 
-    with_them do
-      it "should return total_accepted_money" do
-        subject.accept_money(money)
-        subject.payback.should == expected
+    context "before sell" do
+      with_them do
+        it "should return total_accepted_money" do
+          subject.accept_money(money)
+          subject.payback.should == expected
+        end
       end
-    end
 
-    where(:money, :expected) do
-      [
-        [0, 0],
-        [10, 10],
-        [100, 100]
-      ]
+      where(:money, :expected) do
+        [
+          [0, 0],
+          [10, 10],
+          [100, 100]
+        ]
+      end
     end
 
     context "after sell" do
       with_them do
-        it "should return total_accepted_money" do
+        before do
           money_list.each do |money|
             subject.accept_money(money)
           end
           subject.sell(:coke)
+        end
 
+        it "should return total_accepted_money" do
           subject.payback.should == payback_money
         end
       end
@@ -115,7 +103,7 @@ describe VendingMachine do
   describe "#purchasable?(juice_name)" do
     context "no coke" do
       subject { VendingMachine.new([]) } 
-      
+
       it do
         subject.purchasable?(:coke).should be_false
       end
@@ -127,32 +115,22 @@ describe VendingMachine do
       end
     end
 
-    context "after accept_money(120)" do
+    with_them do
       before do
-        subject.accept_money(100)
-        subject.accept_money(10)
-        subject.accept_money(10)
+        money_list.each do |money|
+          subject.accept_money(money)
+        end
       end
 
-      it { subject.purchasable?(:coke).should be_true }
+      it { subject.purchasable?(:coke).should == expected }
     end
 
-    context "after accept_money(110)" do
-      before do
-        subject.accept_money(100)
-        subject.accept_money(10)
-      end
-
-      it { subject.purchasable?(:coke).should be_false }
-    end
-
-    context "after accept_money(130)" do
-      before do
-        subject.accept_money(100)
-        3.times { subject.accept_money(10) }
-      end
-
-      it { subject.purchasable?(:coke).should be_true }
+    where(:money_list, :expected) do
+      [
+        [[], false],
+        [[100, 10], false],
+        [[100, 10, 10], true],
+      ]
     end
   end
 
@@ -179,7 +157,6 @@ describe VendingMachine do
       end
     end
     context "not purchasable coke" do
-      
       before do
         subject.accept_money(100)
       end
