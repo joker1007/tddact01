@@ -7,8 +7,9 @@ describe VendingMachine do
   describe "#accept_money(money)" do
     with_them do
       it "should add money to total_accepted_money" do
-        subject.accept_money(money)
-        subject.total_accepted_money.should == expected
+        expect {
+          subject.accept_money(money)
+        }.to change(subject, :total_accepted_money).by(expected)
       end
     end
 
@@ -22,9 +23,10 @@ describe VendingMachine do
     context "multi accept" do
       with_them do
         it "should add money to total_accepted_money" do
-          subject.accept_money(money1)
-          subject.accept_money(money2)
-          subject.total_accepted_money.should == expected
+          expect {
+            subject.accept_money(money1)
+            subject.accept_money(money2)
+          }.to change(subject, :total_accepted_money).by(expected)
         end
       end
 
@@ -35,6 +37,25 @@ describe VendingMachine do
         ]
       end
 
+      context "unacceptable money" do
+        with_them do
+          it "should not accept money" do
+            expect {
+              subject.accept_money(money1)
+              subject.accept_money(money2)
+            }.to change(subject, :total_accepted_money).by(0)
+          end
+        end
+
+        where(:money1, :money2) do
+          [
+            [1, 1],
+            [1, 5],
+            [5000, 10000],
+            [10000, 1],
+          ]
+        end
+      end
     end
   end
 
