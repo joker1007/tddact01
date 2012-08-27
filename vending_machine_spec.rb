@@ -73,7 +73,7 @@ describe VendingMachine do
 
   describe "#juice_stocks" do
     it "should return a juice array" do
-      subject.juice_stocks.should == [Juice.new(:coke, 120)]*5
+      subject.juice_stocks.should == [Juice.new("Coke", 120)]*5
     end
   end
 
@@ -82,13 +82,13 @@ describe VendingMachine do
       subject { VendingMachine.new([]) } 
 
       it do
-        subject.purchasable?(:coke).should be_false
+        subject.purchasable?("Coke").should be_false
       end
     end
 
     context "accept_money not yet" do
       it do
-        subject.purchasable?(:coke).should be_false
+        subject.purchasable?("Coke").should be_false
       end
     end
 
@@ -99,7 +99,7 @@ describe VendingMachine do
         end
       end
 
-      it { subject.purchasable?(:coke).should == expected }
+      it { subject.purchasable?("Coke").should == expected }
     end
 
     where(:money_list, :expected) do
@@ -121,26 +121,26 @@ describe VendingMachine do
 
       it "increments sales" do
         expect {
-          subject.sell(:coke)
+          subject.sell("Coke")
         }.to change(subject, :sales).by(120)
       end
 
       it "decrements juice stock count" do
         expect {
-          subject.sell(:coke)
+          subject.sell("Coke")
         }.to change {
-          subject.get_juice_stock_count(:coke)
+          subject.get_juice_stock_count("Coke")
         }.by(-1)
       end
 
       it do
         subject.should_receive(:payback).and_return(0)
-        subject.sell(:coke)
+        subject.sell("Coke")
       end
 
       it do
         subject.stub!(:payback).and_return(0)
-        expect {|b| subject.sell(:coke, &b)}.to yield_with_args(0)
+        expect {|b| subject.sell("Coke", &b)}.to yield_with_args(0)
       end
     end
 
@@ -151,7 +151,7 @@ describe VendingMachine do
 
       it do
         expect {
-          subject.sell(:coke)
+          subject.sell("Coke")
         }.to change(subject, :sales).by(0)
       end
     end
@@ -169,7 +169,7 @@ describe VendingMachine do
 
   describe "#get_purchasable_juice_names" do
     with_them do
-      subject { VendingMachine.new([Juice.new(:coke,120), Juice.new(:redbull,200)]) }
+      subject { VendingMachine.new([Juice.new("Coke",120), Juice.new(:redbull,200)]) }
       it "return purchasable juice names" do
         money_list.each do |money|
           subject.accept_money(money)
@@ -180,10 +180,10 @@ describe VendingMachine do
     where(:money_list, :purchasable_juice_names) do
       [
         [[100,10], []],
-        [[100,10,10], [:coke]],
-        [[100,50,10,10,10,10], [:coke]],
-        [[100,100], [:coke,:redbull]],
-        [[100,100,10], [:coke,:redbull]]
+        [[100,10,10], ["Coke"]],
+        [[100,50,10,10,10,10], ["Coke"]],
+        [[100,100], ["Coke",:redbull]],
+        [[100,100,10], ["Coke",:redbull]]
       ]
     end
 
