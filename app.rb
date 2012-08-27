@@ -6,11 +6,13 @@ require "haml"
 require File.join(File.dirname(File.expand_path(__FILE__)), "vending_machine")
 
 VENDING_MACHINE = VendingMachine.new
-[Juice.new("DoctorPepper", 120), Juice.new("DoctorPepper", 120), Juice.new("DoctorPepper", 120)].each do |j|
-  VENDING_MACHINE.add_juice_stock(j)
+
+3.times do
+  VENDING_MACHINE.add_juice_stock(Juice.new("DoctorPepper", 120))
 end
-[Juice.new("RedBull", 120), Juice.new("RedBull", 120), Juice.new("RedBull", 120)].each do |j|
-  VENDING_MACHINE.add_juice_stock(j)
+
+3.times do
+  VENDING_MACHINE.add_juice_stock(Juice.new("RedBull", 120))
 end
 
 set :haml,  {format: :html5}
