@@ -44,6 +44,19 @@ post '/add_juice' do
   haml :index
 end
 
+get '/refund' do
+  @refund = {}
+  payback = VENDING_MACHINE.payback
+  [1000,500,100,50,10].each do |coin|
+    quo = payback / coin
+    @refund[coin] = quo
+    payback = payback - quo * coin
+    break if payback == 0
+  end
+  @refund[:all] = @refund.each_value.inject(0) {|sum,i| sum + i}
+  haml :index
+end
+
 helpers do
   def purchase_button(juice)
     if VENDING_MACHINE.purchasable?(juice.name)
