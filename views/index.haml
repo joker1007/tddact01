@@ -62,12 +62,11 @@
                 %th 10円
             %tbody
               %tr
-                %td = refound_money('')
-                %td = refound_money('1000')
-                %td = refound_money('500')
-                %td = refound_money('100')
-                %td = refound_money('50')
-                %td = refound_money('10')
+                - [:all,1000,500,100,50,10].each do |coin|
+                  - if @refund
+                    %td= @refund[coin]
+                  - else
+                    %td 0
 
         %h3 ジュースを追加する
         %form{method: "POST", action: "/add_juice"}
