@@ -44,6 +44,17 @@ post '/add_juice' do
   haml :index
 end
 
+get '/refund' do
+  payback = VENDING_MACHINE.payback
+  @refund = [1000,500,100,50,10].each_with_object({:all => payback}) do |coin, h|
+    quo = payback / coin
+    h[coin] = quo
+    payback = payback - quo * coin
+    break h if payback <= 0
+  end
+  haml :index
+end
+
 helpers do
   def purchase_button(juice)
     if VENDING_MACHINE.purchasable?(juice.name)

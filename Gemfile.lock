@@ -12,6 +12,8 @@ GEM
       tins (~> 0.4.3)
     gherkin (2.11.2)
       json (>= 1.4.6)
+    gherkin (2.11.2-x86-mingw32)
+      json (>= 1.4.6)
     haml (3.1.7)
     json (1.7.5)
     rack (1.4.1)
@@ -49,6 +51,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86-mingw32
 
 DEPENDENCIES
   cucumber

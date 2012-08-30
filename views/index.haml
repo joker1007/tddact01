@@ -48,6 +48,26 @@
           %input#money-1000{type: "radio", name: "money", value: "1000"}
           %input{type: "submit", value: "投入"}
 
+        %h3 払い戻し
+        %form{method: "GET", action: "/refund"}
+          %input{type: "submit", value: "払い戻し"}
+          %table.table
+            %thead
+              %tr
+                %th 支払い合計
+                %th 1000円
+                %th 500円
+                %th 100円
+                %th 50円
+                %th 10円
+            %tbody
+              %tr
+                - [:all,1000,500,100,50,10].each do |coin|
+                  - if @refund
+                    %td= @refund[coin]
+                  - else
+                    %td 0
+
         %h3 ジュースを追加する
         %form{method: "POST", action: "/add_juice"}
           %label{for: "juice-name-input", style: "display: inline"} 名前
